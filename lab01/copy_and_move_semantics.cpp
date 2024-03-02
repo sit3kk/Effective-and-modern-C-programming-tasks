@@ -5,10 +5,10 @@
 
 class Matrix
 {
-public:
+protected:
     size_t n = 0;
     size_t m = 0;
-    int *data = nullptr;
+    double *data = nullptr;
 
 public:
     Matrix() : n(0), m(0), data(nullptr)
@@ -16,12 +16,12 @@ public:
         std::cout << "default constructor" << std::endl;
     }
 
-    Matrix(size_t n, size_t m) : n(n), m(m), data(new int[n * m]())
+    Matrix(size_t n, size_t m) : n(n), m(m), data(new double[n * m]())
     {
         std::cout << "constructor of " << n << "x" << m << " matrix" << std::endl;
     }
 
-    Matrix(std::initializer_list<std::initializer_list<int>> initList)
+    Matrix(std::initializer_list<std::initializer_list<double>> initList)
     {
         n = initList.size();
         m = 0;
@@ -31,7 +31,7 @@ public:
             m = std::max(m, row.size());
         }
 
-        data = new int[n * m]();
+        data = new double[n * m]();
 
         size_t row_index = 0;
         for (const auto& row : initList) {
@@ -66,7 +66,7 @@ public:
         return *this;
     }
 
-     Matrix(const Matrix &other) : n(other.n), m(other.m), data(new int[n * m])
+     Matrix(const Matrix &other) : n(other.n), m(other.m), data(new double[n * m])
     {
         std::cout << "copy constructor" << std::endl;
         std::copy(other.data, other.data + n * m, data);
@@ -86,7 +86,7 @@ public:
         return result;
     }
 
-    int operator()(size_t x, size_t y) const
+    double operator()(size_t x, size_t y) const
     {
 
         if (x > n || y > m)
@@ -117,7 +117,7 @@ public:
             delete[] data;
             n = other.n;
             m = other.m;
-            data = new int[n * m];
+            data = new double[n * m];
             std::copy(other.data, other.data + n * m, data);
         }
         std::cout << "copy assignment operator" << std::endl;
@@ -126,10 +126,69 @@ public:
 
     ~Matrix()
     {
-        // std::cout<< "deconstrucor"<<std::endl;
         delete[] data;
     }
 };
+
+
+class MatrixWithLabel : public Matrix
+{
+
+protected:
+    std::string label = "A";
+
+public:
+    MatrixWithLabel() : Matrix(){};
+
+    MatrixWithLabel(size_t n, size_t m) : Matrix(n, m){};
+
+    MatrixWithLabel(std::initializer_list<std::initializer_list<double>> initList) : Matrix(initList){};
+
+    MatrixWithLabel(const MatrixWithLabel &other) : Matrix(other), label(other.label){};
+
+    MatrixWithLabel(MatrixWithLabel &&other) : Matrix(std::move(other)), label(std::move(other.label)){};
+
+    MatrixWithLabel(std::string label, size_t n, size_t m) : Matrix(n, m), label(label){};
+
+    MatrixWithLabel(std::string label, std::initializer_list<std::initializer_list<double>> initList) : Matrix(initList), label(label){};
+
+    std::string getLabel() const
+    {
+        return label;
+    }
+
+    void setLabel(const std::string& _label)
+    {
+        label = _label;
+    }
+
+    MatrixWithLabel &operator=(const MatrixWithLabel &other)
+    {
+        if (this != &other)
+        {
+            Matrix::operator=(other);
+            label = other.label;
+        }
+        std::cout << "copy assignment operator from MatrixWithLabel" << std::endl;
+        return *this;
+    }
+
+    MatrixWithLabel &operator=(MatrixWithLabel &&other)
+    {
+        if (this != &other)
+        {
+            Matrix::operator=(std::move(other));
+            label = std::move(other.label);
+        }
+        std::cout << "move assignment operator from MatrixWithLabel" << std::endl;
+        return *this;
+    }
+
+
+
+};
+
+
 
 int main()
 {
@@ -154,6 +213,19 @@ int main()
 
     Matrix *pm = new Matrix(-m4);
     std::cout << m6(2, 1) << std::endl;
+
+
+
+    std::cout << "Inheritance" << std::endl;
+
+    MatrixWithLabel l0("B", 3 , 4);
+    MatrixWithLabel l1({{1,2},{4,5}});
+    l1.setLabel("A");
+    MatrixWithLabel l2 = l1;
+    MatrixWithLabel l3 = std::move(l1);
+    std::cout << l2.getLabel() << " " << l3.getLabel() << std::endl;
+    std::cout << l1.getLabel() << std::endl;    
+
 
 
 
