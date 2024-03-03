@@ -138,7 +138,7 @@ protected:
     std::string label = "A";
 
 public:
-    MatrixWithLabel() : Matrix(){};
+    MatrixWithLabel() : Matrix(){} ;
 
     MatrixWithLabel(size_t n, size_t m) : Matrix(n, m){};
 
@@ -203,6 +203,8 @@ int main()
     std ::cout << "copy semantics" << std::endl;
     Matrix m4 = m2;
     
+
+   
     m4 = m3;
 
     std::cout << "Move semantics" << std::endl;
@@ -211,6 +213,7 @@ int main()
     std::cout << "Copy elision" << std::endl;
     Matrix m6 = -m4;
 
+     
     Matrix *pm = new Matrix(-m4);
     std::cout << m6(2, 1) << std::endl;
 
@@ -226,6 +229,8 @@ int main()
     std::cout << l2.getLabel() << " " << l3.getLabel() << std::endl;
     std::cout << l1.getLabel() << std::endl;    
 
+
+   delete pm;
 
 
 
