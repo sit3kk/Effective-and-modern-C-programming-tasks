@@ -138,11 +138,7 @@ protected:
     std::string label = "A";
 
 public:
-    MatrixWithLabel() : Matrix(){} ;
-
-    MatrixWithLabel(size_t n, size_t m) : Matrix(n, m){};
-
-    MatrixWithLabel(std::initializer_list<std::initializer_list<double>> initList) : Matrix(initList){};
+    using Matrix::Matrix;
 
     MatrixWithLabel(const MatrixWithLabel &other) : Matrix(other), label(other.label){};
 
