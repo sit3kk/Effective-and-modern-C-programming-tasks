@@ -114,7 +114,6 @@ public:
     {
         if (this != &other)
         {
-            delete[] data;
             n = other.n;
             m = other.m;
             data = new double[n * m];
