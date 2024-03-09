@@ -6,12 +6,21 @@
 class Container : public Box {
 public:
     static bool verbose;
-    Container(int content):Box(content);                          // implement
-    Container(const Container & container);             // disable
- 	Container & operator=(const Container &container);  // disable
+    Container(int content):Box(content) {};                  // implement
+    Container(const Container & container) = delete;     // disable
+ 	Container & operator=(const Container &container) = delete; // disable
 
-	Container(Container && container);                  // enable
-  	Container & operator=(Container &&container);       // enable
+	Container(Container && container): Box(std::move(container)) {};           // enable
+  	Container & operator=(Container &&container)
+    {
+        if (this != &container) 
+        {
+            Box::operator=(std::move(container));
+        };
+
+        return *this;
+        
+    };       // enable
     ~Container();                                      // enable
 
     friend Container operator+(const Container & p1, const Container & p2);
