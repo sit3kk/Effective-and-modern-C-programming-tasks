@@ -1,29 +1,43 @@
 #pragma once
 #include <iostream>
 #include "Box.h"
+#include <memory>
 
 class Container{
     // Exercise 2: Use smart pointer.
-    Box * pbox = nullptr;
+    std::unique_ptr<Box> pbox;
 public:
     static bool verbose;
-    Container(int content): pbox(new Box){
-        if(verbose) cout << "Creating Container" << endl;
+    Container(int content): pbox(std::make_unique<Box>(content)){
+        if(verbose) std::cout << "Creating Container" << std::endl;
         pbox->setContent(content);
     }
-    Container(const Container & container): pbox(new Box{*(container.pbox)}){
-        if(verbose) cout << "Creating copy of Container\n";
+    Container(const Container & container): pbox(std::make_unique<Box>(*container.pbox)){
+        if(verbose) std::cout << "Creating copy of Container\n";
     }
     Container & operator=(const Container &container){
         if(this != &container) {
-            if(verbose) cout << "Copying Container\n";
+            if(verbose) std::cout << "Copying Container\n";
             *pbox = *container.pbox;
         }
         return *this;
     }
+
+    Container(Container && container): pbox(std::move(container.pbox)){
+        if(verbose) std::cout << "Moving Container\n";
+    }
+
+    Container & operator=(Container && container){
+        if(this != &container) {
+            if(verbose) std::cout << "Moving Container\n";
+            pbox = std::move(container.pbox);
+        }
+        return *this;
+    } 
+     
+
     ~Container(){
-        if(verbose) cout << "Destroying Container \n";
-        delete pbox;
+        if(verbose) std::cout << "Destroying Container \n";
     }
     friend Container operator+(const Container & p1, const Container & p2);
     friend std::ostream & operator << (std::ostream & out, const Container & p){

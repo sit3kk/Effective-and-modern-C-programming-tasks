@@ -21,7 +21,7 @@ public:
         return *this;
         
     };       // enable
-    ~Container();                                      // enable
+    ~Container() {};                                      // enable
 
     friend Container operator+(const Container & p1, const Container & p2);
     friend std::ostream & operator << (std::ostream & out, const Container & p){

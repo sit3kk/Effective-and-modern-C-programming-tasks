@@ -25,7 +25,6 @@ class Container : public Box {
   	Container & operator=(Container && container){
           if (this != &container) {
             Box::operator=(std::move(container)); 
-            if(verbose) cout << "Container: copy assignment.\n";
         }
 		if(verbose) cout << "Container: move assignment.\n";
 		return *this;
