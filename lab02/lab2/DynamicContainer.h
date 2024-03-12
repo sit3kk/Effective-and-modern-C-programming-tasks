@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <memory> 
 #include "Box.h"
 #include <memory>
 
@@ -15,7 +16,8 @@ public:
     Container(const Container & container): pbox(std::make_unique<Box>(*container.pbox)){
         if(verbose) std::cout << "Creating copy of Container\n";
     }
-    Container & operator=(const Container &container){
+   
+    Container & operator=(const Container &container) {
         if(this != &container) {
             if(verbose) std::cout << "Copying Container\n";
             *pbox = *container.pbox;
@@ -39,15 +41,22 @@ public:
     ~Container(){
         if(verbose) std::cout << "Destroying Container \n";
     }
+   
+
     friend Container operator+(const Container & p1, const Container & p2);
     friend std::ostream & operator << (std::ostream & out, const Container & p){
-        return (out << " [" << p.pbox->getContent() << "] ");
+
+        if(p.pbox) {
+            return (out << " [" << p.pbox->getContent() << "] ");
+        } else {
+            return out;
+        }
     }
 };
 
 bool Container::verbose = false;
 
-inline Container operator+(const Container & p1, const Container & p2){
-    Container suma(p1.pbox->getContent() + p2.pbox->getContent());
-    return suma;
+inline Container operator+(const Container & p1, const Container & p2) {
+    Container sum(p1.pbox->getContent() + p2.pbox->getContent());
+    return sum;
 }
