@@ -10,18 +10,10 @@ public:
     Container(const Container & container) = delete;     // disable
  	Container & operator=(const Container &container) = delete; // disable
 
-	Container(Container && container): Box(std::move(container)) {};           // enable
-  	Container & operator=(Container &&container)
-    {
-        if (this != &container) 
-        {
-            Box::operator=(std::move(container));
-        };
-
-        return *this;
-        
-    };       // enable
-    ~Container() {};                                      // enable
+	Container(Container && container) = default;          // enable
+  	Container & operator=(Container &&container) = default;       // enable
+    ~Container() = default;
+                                      // enable
 
     friend Container operator+(const Container & p1, const Container & p2);
     friend std::ostream & operator << (std::ostream & out, const Container & p){
