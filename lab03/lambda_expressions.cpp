@@ -9,52 +9,65 @@
 #include <type_traits>
 using namespace std;
 
-void print(const std::vector<int> & v, const std::string & label = ""){
+void print(const std::vector<int> &v, const std::string &label = "")
+{
   cout << label;
-  for( auto x  : v)
-	cout << " " << x ;
+  for (auto x : v)
+    cout << " " << x;
   cout << endl;
 }
 
-int main(){
-  std::vector<int> v = {256, 64, 16*3, 16*9, 16, 8*7, -9, -3, 1, 6, -2, 5, 9, 0};
+int main()
+{
+  std::vector<int> v = {256, 64, 16 * 3, 16 * 9, 16, 8 * 7, -9, -3, 1, 6, -2, 5, 9, 0};
   print(v, "original:");
 
   /// 1. Sort v with respect to the distance to the center (closest first)
   int center = 50;
-  std::sort(v.begin(), v.end(), [](){});            // 1
+  sort(v.begin(), v.end(), [center](int a, int b)
+       { return abs(a - center) < abs(b - center); }); // 1
   print(v, "center 50:");
-
 
   /// 2. Sort in increasing order but
   ///  - negative numbers  are after positive ones, with zero in the middle,
   ///  - if numbers have the same sign then odd numbers are after even ones
   /// e.g.  4  < 8 < 1 < 3 < 0 <  -8 < -2 < -7 < -3
 
-  auto positiveEvenFirst= [](){};                  // 2
+  auto positiveEvenFirst = [](int a, int b)
+  {
+    if ((a >= 0) != (b >= 0))
+      return a > b;
+    if ((a == 0) || (b == 0))
+      return b == 0;
+    if ((abs(a) % 2) == (abs(b) % 2))
+      return a < b;
+    return (abs(a) % 2) < (abs(b) % 2);
+  }; // 2
   std::sort(v.begin(), v.end(), positiveEvenFirst);
   print(v, "positiveEven:");
 
-  assert(positiveEvenFirst(2,-2));
-  assert(positiveEvenFirst(2,-1));
-  assert(positiveEvenFirst(1,-2));
-  assert(!positiveEvenFirst(-2,1));
+  assert(positiveEvenFirst(2, -2));
+  assert(positiveEvenFirst(2, -1));
+  assert(positiveEvenFirst(1, -2));
+  assert(!positiveEvenFirst(-2, 1));
   assert(positiveEvenFirst(2, 1));
-  assert(positiveEvenFirst(-2,-1));
-  assert(!positiveEvenFirst(2,2));
-  assert(!positiveEvenFirst(1,2));
+  assert(positiveEvenFirst(-2, -1));
+  assert(!positiveEvenFirst(2, 2));
+  assert(!positiveEvenFirst(1, 2));
   assert(positiveEvenFirst(0, -1));
   assert(!positiveEvenFirst(0, 1));
   assert(positiveEvenFirst(1, 0));
   assert(!positiveEvenFirst(-1, 0));
-
 
   /// 3. generator = function without parameters that return random integer number
   /// from interval [a, b] (a and b both included).
   /// Changing values of a or b should change the interval used by generator.
   srand(2022);
   int a = 0, b = 40;
-  auto generator = []{};  /// 3
+  auto generator = [&a, &b]()
+  {
+    return a + rand() % (b - a + 1);
+  }; /// 3
 
   std::generate(v.begin(), v.end(), generator);
   print(v, "generator [0,40]:");
@@ -62,29 +75,38 @@ int main(){
   std::generate(v.begin(), v.end(), generator);
   print(v, "generator [100, 200]:");
 
-
   /// 4. Function that generates arithmetic sequence with given start value and step.
   /// Changing start does not change the beginning of the sequence
   /// but a change of step influences the function output.
-  int start = 5, step =2;
-  auto arithmeticGenerator =  [](){} ;                   // [ 4 ]
-  std::generate(v.begin(), v.end(), arithmeticGenerator );
+  int start = 5, step = 2;
+  auto arithmeticGenerator = [n = start, &step]() mutable
+  {
+    auto current = n;
+    n += step;
+    return current;
+  }; // [ 4 ]
+  std::generate(v.begin(), v.end(), arithmeticGenerator);
   print(v, "arithm [5,2] :");
 
   v.resize(20);
-  start=0; step =5;
+  start = 0;
+  step = 5;
   std::generate(v.begin(), v.end(), arithmeticGenerator);
-  print(v,"arithm [5,5] :");
+  print(v, "arithm [5,5] :");
 
   /// 5. Function that for given standard container (vector, list, deque)
   ///  computes l1 norm i.e. the sum of the absolute values of elements in the container.
   ///  Try to use std::accumulate algorithm with another lambda expression to implement it.
-  auto l1_norm = [](){}; ;                           // [ 5 ]
+  auto l1_norm = [](const auto &container)
+  {
+    return accumulate(container.begin(), container.end(), 0.0, [](auto sum, auto val)
+                      { return sum + abs(val); });
+  }; // [ 5 ]
 
   cout << "l1 norm (v) : " << l1_norm(v) << endl;
   assert(l1_norm(v) == 1050);
 
-  vector<double> m = { 1.4, 2.4, -2.4, -4.2, -43.3 };
+  vector<double> m = {1.4, 2.4, -2.4, -4.2, -43.3};
   cout << "l1 norm (m) : " << l1_norm(m) << endl;
 
   list<double> l(m.begin(), m.end());
@@ -93,14 +115,24 @@ int main(){
   /// 6. Function that for given array a and integer n returns
   /// a function with one parameter x that computes
   /// a value of a polynomial of degree n with coefficients a at the point x.
-  auto polynomial = [](double * a, int n){
-  };   // ( 6 )
+  auto polynomial = [](double *a, int n)
+  {
+    return [a, n](double x)
+    {
+      double result = 0.0;
+      for (int i = 0; i <= n; ++i)
+      {
+        result += a[i] * pow(x, i);
+      }
+      return result;
+    };
+  }; // ( 6 )
 
   double c[] = {1, 2, 3, 4, 5};
-  auto w1  = polynomial(c, 4);
+  auto w1 = polynomial(c, 4);
   cout << w1(1.0) << " " << w1(0.0) << " " << w1(2.0) << endl;
 
-  auto w2  = polynomial(c, 2);
+  auto w2 = polynomial(c, 2);
   cout << w2(1.0) << " " << w2(0.0) << " " << w2(2.0) << endl;
 
   return 0;
