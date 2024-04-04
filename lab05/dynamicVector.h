@@ -6,6 +6,7 @@
 #include <initializer_list>
 #include <algorithm>
 #include <stdexcept>
+#include <cassert>
 
 class VectorException : public std::runtime_error
 {
@@ -29,6 +30,15 @@ public:
   typedef T *pointer;
   typedef T &reference;
   typedef const T &const_reference;
+
+  template <size_t N>
+  explicit Vector(const Vector<T, N> &staticVector) : size_(N), data(std::make_unique<T[]>(N))
+  {
+    for (size_t i = 0; i < N; ++i)
+    {
+      data[i] = staticVector.get(i);
+    }
+  }
 
   explicit Vector(size_t size = 0) : size_(size), data(std::make_unique<T[]>(size))
   {
@@ -76,6 +86,25 @@ public:
     std::copy_n(data.get(), minSize, newData.get());
     data = std::move(newData);
     size_ = newSize;
+  }
+
+  template <size_t N>
+  Vector<T, N> operator+(const Vector<T, N> &staticVec) const
+  {
+
+    assert(this->size() <= N && "Dynamic vector size exceeds static vector capacity.");
+
+    Vector<T, N> result;
+    for (size_t i = 0; i < this->size(); ++i)
+    {
+      result[i] = this->data[i] + staticVec[i];
+    }
+
+    for (size_t i = this->size(); i < N; ++i)
+    {
+      result[i] = staticVec[i];
+    }
+    return result;
   }
 
   friend Vector operator+(const Vector &lhs, const Vector &rhs)

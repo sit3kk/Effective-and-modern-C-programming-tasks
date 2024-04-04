@@ -39,6 +39,38 @@ public:
         std::fill(data + list.size(), data + N, T{});
     }
 
+    explicit Vector(const Vector<T, 0> &dynamicVector)
+    {
+        assert(dynamicVector.size() <= N);
+        for (size_t i = 0; i < dynamicVector.size(); ++i)
+        {
+            data[i] = dynamicVector[i];
+        }
+
+        for (size_t i = dynamicVector.size(); i < N; ++i)
+        {
+            data[i] = T{};
+        }
+    }
+
+    Vector<T, N> operator+(const Vector<T, 0> &dynamicVec) const
+    {
+
+        assert(dynamicVec.size() <= N && "Dynamic vector size exceeds static vector capacity.");
+
+        Vector<T, N> result;
+        for (size_t i = 0; i < dynamicVec.size(); ++i)
+        {
+            result[i] = this->data[i] + dynamicVec[i];
+        }
+
+        for (size_t i = dynamicVec.size(); i < N; ++i)
+        {
+            result[i] = this->data[i];
+        }
+        return result;
+    }
+
     friend Vector operator+(const Vector &u, const Vector &v)
     {
         Vector sum;
@@ -84,4 +116,4 @@ public:
     }
 };
 
-#endif // STATIC_VECTOR_H
+#endif
