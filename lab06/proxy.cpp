@@ -3,34 +3,68 @@
 #include <boost/type_index.hpp>
 using namespace std;
 
-double f(int x, double y, const int & z, int & w){
+double f(int x, double y, const int &z, int &w)
+{
     w += 2;
-	cout << x << " " << y<< " " << z << " " << w <<endl;
-	return (x*y - z*w);
+    cout << x << " " << y << " " << z << " " << w << endl;
+    return (x * y - z * w);
 }
 
-int main(){
+template <typename... Args>
+void showNames(Args &&...args)
+{
+    ((std::cout
+      << boost::typeindex::type_id_with_cvr<decltype(args)>().pretty_name()
+      << " = " << args << "\n"),
+     ...);
+}
+
+template <typename F>
+class Proxy
+{
+    F _f;
+
+public:
+    Proxy(F f) : _f(f) {}
+
+    template <typename... Args>
+    auto operator()(Args &&...args)
+    {
+        showNames(std::forward<Args>(args)...);
+        return _f(std::forward<Args>(args)...);
+    }
+};
+
+template <typename F>
+Proxy<F> make_proxy(F f)
+{
+    return Proxy(std::forward<F>(f));
+}
+
+int main()
+{
     int x = 4;
     const int y = 8;
     showNames(x, 4.5, y, f);
     showNames(1, 1.0f, 1.0, 1LL, &x, &y);
 
     auto p = make_proxy(f);
- //   auto p = Proxy(f);    /// with C++ 17
+    //   auto p = Proxy(f);    /// with C++ 17
     auto result1 = p(12, 5.1, y, x);
     cout << "result1 = " << result1 << endl;
     auto result2 = p(12, 5.1, y, x);
     cout << "result2 = " << result2 << endl;
     auto result3 = p(3, 3, 5, x);
     cout << "result3 = " << result3 << endl;
-    
-    auto g = make_proxy([](int &&x, int & y){ y = x; return y; }) ;
- //   auto g = Proxy([](int &&x, int & y){ y = x; return y; }) ; // with C++ 17
+
+    auto g = make_proxy([](int &&x, int &y)
+                        { y = x; return y; });
+    //   auto g = Proxy([](int &&x, int & y){ y = x; return y; }) ; // with C++ 17
     cout << g(5, x) << endl;
-    cout << "x = " <<  x << endl;
+    cout << "x = " << x << endl;
     return 0;
 }
-/** Expected output 
+/** Expected output
  1 > int& [i] = 4
  2 > double [d] = 4.5
  3 > int const& [i] = 8
