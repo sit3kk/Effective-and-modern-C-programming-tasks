@@ -7,6 +7,37 @@
 #include <vector>
 #include <cmath>
 #include <string>
+#include <stdexcept>
+
+struct SafePolicy
+{
+  static constexpr bool init = true;
+  static constexpr bool check = true;
+
+  static void check_index(size_t index, size_t size)
+  {
+    if (index >= size)
+    {
+      throw std::out_of_range("Index out of range");
+    }
+  }
+};
+
+struct FastPolicy
+{
+  static constexpr bool init = false;
+  static constexpr bool check = false;
+
+  static void check_index(size_t index, size_t size) {}
+};
+
+struct InitFastPolicy
+{
+  static constexpr bool init = true;
+  static constexpr bool check = false;
+
+  static void check_index(size_t index, size_t size) {}
+};
 
 template <typename T>
 struct VectorTraits
@@ -55,7 +86,7 @@ struct VectorTraits
   }
 };
 
-template <typename T, size_t N>
+template <typename T, size_t N, typename P = FastPolicy>
 class Vector
 {
   T data[N];
@@ -67,14 +98,28 @@ public:
   typedef T &reference;
   typedef const typename VectorTraits<T>::param_type const_reference;
 
-  Vector() : data{} {}
+  Vector()
+  {
+    if constexpr (P::init)
+    {
+      std::fill(data, data + N, T{});
+    }
+  }
+
   Vector(const Vector &v) = default;
   Vector &operator=(const Vector &m) = default;
 
   Vector(std::initializer_list<T> list)
   {
+    if (list.size() > N)
+    {
+      throw std::out_of_range("Initializer list too long");
+    }
     std::copy(list.begin(), list.end(), data);
-    std::fill(data + list.size(), data + N, VectorTraits<T>::default_value());
+    if constexpr (P::init)
+    {
+      std::fill(data + list.size(), data + N, T{});
+    }
   }
 
   size_type size() const
@@ -82,18 +127,23 @@ public:
     return N;
   }
 
-  const_reference get(size_type index) const
+  T get(size_t index) const
   {
-    assert(index < N);
+    if constexpr (P::check)
+    {
+      P::check_index(index, N);
+    }
     return data[index];
   }
 
-  void set(size_type index, const_reference value)
+  void set(size_t index, const T &value)
   {
-    assert(index < N);
+    if constexpr (P::check)
+    {
+      P::check_index(index, N);
+    }
     data[index] = value;
   }
-
   friend Vector operator*(const typename VectorTraits<T>::scalar_type &x, const Vector &v)
   {
     Vector result;
