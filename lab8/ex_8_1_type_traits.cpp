@@ -1,15 +1,32 @@
 #include <iostream>
-using  namespace std;
+#include <typeinfo>
+#include <limits>
+using namespace std;
+
 /**
  * Outputs information about numerical type T:
  * (un)signed, (not) integer, min & max values
-*/
+ */
 template <typename T>
-void info(T x){
+void info(T x)
+{
+    std::cout << (std::numeric_limits<T>::is_signed ? "signed, " : "unsigned, ");
 
+    if (typeid(x) == typeid(int))
+    {
+        std::cout << "integer, ";
+    }
+    else
+    {
+        std::cout << "not integer, ";
+    }
+
+    std::cout << "min: " << std::numeric_limits<T>::min() << ", "
+              << "max: " << std::numeric_limits<T>::max() << std::endl;
 }
 
-int main() {
+int main()
+{
     info(1);
     info(2.0f);
     info(3U);
