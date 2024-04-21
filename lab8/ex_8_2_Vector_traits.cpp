@@ -1,24 +1,28 @@
 #include <iostream>
 #include "Vector.h"
-using  namespace std;
-int main() {
+#include <string>
+
+int main()
+{
     Vector<double, 4> a{};
-    for(int i=0; i<a.size(); i++){
+    for (int i = 0; i < a.size(); i++)
+    {
         a.set(i, 2.0 - i);
     }
-    cout  << "a   = " << a <<  endl;
-    cout  << "5.2*a = " << 5.2 * a << endl;
+    std::cout << "a   = " << a << std::endl;
+    std::cout << "5.2*a = " << 5.2 * a << std::endl;
 
-    Vector<int, 5> b{1,2,5,6,8};
-    cout << "b   = " << b <<  endl;
-    cout << "2*b = " << 2 * b <<  endl;
+    Vector<int, 5> b{1, 2, 5, 6, 8};
+    std::cout << "b   = " << b << std::endl;
+    std::cout << "2*b = " << 2 * b << std::endl;
 
-    Vector<string, 4> c{"curiosity", "killed", "the", "cat" };
-    cout << "c   = " << c <<  endl;
-    cout << "2*c = " << 2 * c <<  endl;
+    Vector<std::string, 4> c{"curiosity", "killed", "the", "cat"};
+    std::cout << "c   = " << c << std::endl;
+    std::cout << "2*c = " << 2 * c << std::endl;
 
     return 0;
-}
+};
+
 /**
  * Expected output:
 a   = 2 1 0 -1
