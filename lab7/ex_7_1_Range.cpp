@@ -1,42 +1,83 @@
 #include <iostream>
-#include "Range.h"
-using namespace std;
+#include <iterator>
 
-int main() {
-    auto r1 = Range<int>(1, 9, 2);
-    for( auto x : r1 )
-        cout << x <<" ";  // 1 3 5 7
-    cout << "\n";
-    for(auto x : r1)
-        cout << "--";
-    cout << "\n";
+template <typename T>
+class Range
+{
+public:
+    class Iterator
+    {
+    public:
+        Iterator(T start, T step) : current(start), step(step) {}
+
+        T operator*() const { return current; }
+        Iterator &operator++()
+        {
+            current += step;
+            return *this;
+        }
+        bool operator!=(const Iterator &other) const { return current < other.current; }
+
+    private:
+        T current;
+        T step;
+    };
+
+    Range(T stop) : Range(T(0), stop, T(1)) {}
+    Range(T start, T stop, T step = T(1)) : start(start), stop(stop), step(step) {}
+
+    Iterator begin() const { return Iterator(start, step); }
+    Iterator end() const { return Iterator(stop, step); }
+
+private:
+    T start;
+    T stop;
+    T step;
+};
+
+template <typename T>
+Range<T> make_range(T start, T stop, T step = T(1))
+{
+    return Range<T>(start, stop, step);
+}
+
+template <typename T>
+Range<T> make_range(T stop)
+{
+    return Range<T>(T(0), stop, T(1));
+}
+
+int main()
+{
+    for (auto x : Range<int>(1, 9, 2))
+        std::cout << x << " ";
+    std::cout << "\n";
 
     Range<double> r2(1, 9, 1.5);
-    auto it = r2.begin();
-    while(it != r2.end()){
-        cout << *it++ << " ";
-    }
-    cout << "\n------------\n";
+    for (auto x : r2)
+        std::cout << x << " ";
+    std::cout << "\n";
 
-    for( auto x : Range<int>(1, 5))
-        cout << x << ", ";  // 1, 2, 3, 4,
-    cout << "\n------------\n";
+    for (auto x : Range<int>(1, 5))
+        std::cout << x << ", ";
+    std::cout << "\n";
 
-    for( auto x : Range<int>(7) )
-        cout << x << " ";  // 0 1 2 3 4 5 6
-    cout << "\n------------\n";
+    for (auto x : Range<int>(7))
+        std::cout << x << " ";
+    std::cout << "\n";
 
     auto r3 = make_range(-4.0, 3.5, 1.2);
-    for(auto x : r3)
-        cout << x << " ";
-    cout << "\n------------\n";
+    for (auto x : r3)
+        std::cout << x << " ";
+    std::cout << "\n";
 
-    for(auto x: make_range(6))
-        cout << x << " ";
-    cout << "\n------------\n";
+    for (auto x : make_range(6))
+        std::cout << x << " ";
+    std::cout << "\n";
 
     return 0;
 }
+
 /**
  * Expected output :
  * ----------------
