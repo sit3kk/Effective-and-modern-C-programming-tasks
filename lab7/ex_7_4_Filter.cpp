@@ -5,26 +5,35 @@
 
 using namespace std;
 
-int main() {
+int main()
+{
 
     // Function for debugging
     bool debug = true;
-    auto message = [&debug](int x, bool v) {
-        if (debug  and !v) cout << " - skipping " << x << endl;
+    auto message = [&debug](int x, bool v)
+    {
+        if (debug and !v)
+            cout << " - skipping " << x << endl;
         return v;
     };
-    auto addMessage = [message](auto f) {
-        return [message, f](int x) { return message(x, f(x)); };
+    auto addMessage = [message](auto f)
+    {
+        return [message, f](int x)
+        { return message(x, f(x)); };
     };
 
     // Predicates
-    auto isOdd = [](int x) {
+    auto isOdd = [](int x)
+    {
         return x % 2 == 1;
     };
-    auto isPrime = [](int x) {
-        if (x <= 1) return false;
+    auto isPrime = [](int x)
+    {
+        if (x <= 1)
+            return false;
         for (auto i = 2; i * i <= x; ++i)
-            if (x % i == 0) return false;
+            if (x % i == 0)
+                return false;
         return true;
     };
 
@@ -39,25 +48,28 @@ int main() {
     v[2] = 1001;
     v.push_back(101);
 
-    for (auto x : evenPrime) {
+    for (auto x : evenPrime)
+    {
         cout << x << endl;
     }
     cout << "=======================\n";
     auto primeOdd = make_filter(make_filter(v, isPrime), isOdd);
-    for (auto x : primeOdd) {
+    for (auto x : primeOdd)
+    {
         cout << x << endl;
     }
     cout << "=======================\n";
-    auto evenPrimeWithOne = make_filter(evenPrime, [](int x){
+    auto evenPrimeWithOne = make_filter(evenPrime, [](int x)
+                                        {
         while(x!=0)
             if(x%10==1)
                 return true;
             else
                 x /= 10;
-        return false;
-    });
+        return false; });
     debug = false;
-    for (auto x : evenPrimeWithOne) {
+    for (auto x : evenPrimeWithOne)
+    {
         cout << x << endl;
     }
     return 0;
