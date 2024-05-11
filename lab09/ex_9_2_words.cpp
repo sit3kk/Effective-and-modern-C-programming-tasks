@@ -23,32 +23,32 @@ void toLowerAlpha(string& word) {
 }
 
 int main() {
-    // Variable to store each word read from input
     string word;
-    // Using a map to count occurrences of each word
+
     map<string, int> wordsCount;
-    // Read words from standard input (cin)
+   
+
     while (cin >> word) {
-        toLowerAlpha(word);  // Clean and transform the word
+        toLowerAlpha(word);  
         if (!word.empty()) {
-            wordsCount[word]++;  // Increment the count for the word
+            wordsCount[word]++;
         }
     }
 
-    // Display the number of distinct words
+    
     cout << "Number of distinct words: " << wordsCount.size() << endl;
 
-    // Multimap to reverse the map for sorting by frequency
+    
     multimap<int, string, greater<int>> sortedWords;
 
-    // Insert items into the multimap, where frequency is the key
+
     for (const auto& pair : wordsCount) {
         sortedWords.insert({pair.second, pair.first});
     }
 
     cout << "\nThe top 20 most popular words:\n";
 
-    // Iterate over the multimap to get the top 20 most frequent words
+    
     int counter = 0;
     for (const auto& pair : sortedWords) {
         cout << pair.second << " : " << pair.first << '\n';
