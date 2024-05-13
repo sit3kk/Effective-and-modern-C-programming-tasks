@@ -1,33 +1,60 @@
 #include <iostream>
+#include <map>
+#include <unordered_map>
 #include <vector>
+#include <string>
+#include <algorithm>
+#include <cctype>
+
 using namespace std;
 
 /**
- * Removes all non alphanumeric characters from given word and converts to lower case.
- * @param[in,out] word on return word consist only of lower case characters.
+ * Converts a given string to lowercase and removes non-alphanumeric characters.
+ * @param[in,out] word The string to be transformed.
  */
-void toLowerAlpha(std::string & s1) ;
-
-int main(){
-    int count = 0;
-    std::string word;
-    map<string, int> c;
-    std::vector<int> v;
-    while( cin >> word) {
-       toLowerAlpha(word);
-
-       if(word != ""){
-           c[word]++;
-           count++;
-       }
-
+void toLowerAlpha(string& word) {
+    string cleaned;
+    for (char ch : word) {
+        if (isalnum(ch)) {
+            cleaned += tolower(ch);
+        }
     }
-    // ...
-    multimap<int, string> m2;
+    word = cleaned;
+}
 
-    cout << "Number of distinct words : " << count << endl;
-    cout << "\nThe top 20 most popular words: \n";
-    // ...
+int main() {
+    string word;
+
+    map<string, int> wordsCount;
+   
+
+    while (cin >> word) {
+        toLowerAlpha(word);  
+        if (!word.empty()) {
+            wordsCount[word]++;
+        }
+    }
+
+    
+    cout << "Number of distinct words: " << wordsCount.size() << endl;
+
+    
+    multimap<int, string, greater<int>> sortedWords;
+
+
+    for (const auto& pair : wordsCount) {
+        sortedWords.insert({pair.second, pair.first});
+    }
+
+    cout << "\nThe top 20 most popular words:\n";
+
+    
+    int counter = 0;
+    for (const auto& pair : sortedWords) {
+        cout << pair.second << " : " << pair.first << '\n';
+        if (++counter == 20) break;
+    }
+
     return 0;
 }
 /*
