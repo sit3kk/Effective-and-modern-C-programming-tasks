@@ -21,7 +21,6 @@ public:
     using value_type = typename std::remove_reference<Container>::type::value_type;
     using iterator_type = typename std::remove_reference<Container>::type::iterator;
 
-    // Constructor capable of handling both lvalue and rvalue references
     Filter(Container &&c, Predicate p)
         : container_(std::forward<Container>(c)), pred_(std::move(p)) {}
 
@@ -75,7 +74,7 @@ public:
     iterator end() { return iterator(std::end(container_), std::end(container_), pred_); }
 
 private:
-    Container container_; // Directly use the forwarded container
+    Container container_;
     Predicate pred_;
 };
 
