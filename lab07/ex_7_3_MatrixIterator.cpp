@@ -3,15 +3,16 @@
 #include <iomanip>
 #include <vector>
 #include "Matrix.h"
+#include <numeric>
 using namespace std;
 
-int main(){
+int main() {
 
     using DMatrix = Matrix<double, 3, 4>;
     DMatrix m({{1,  2,  3,  4},  // constructor from
                { 5,  6,  7,  8},  // initialization_list
                { 9, 10, 11, 12}});
-    cout <<fixed << setprecision(2);
+    cout << fixed << setprecision(2);
     cout << "Matrix m\n";
     for(auto elem : m)
         cout << setw(6) << elem << " ";
@@ -36,12 +37,12 @@ int main(){
     };
     cout << "sizes of vectors in second row"  << endl;
     for(auto it = mv.row_begin(2); it != mv.row_end(2); ++it){
-        cout << it->size() << endl;
+        cout << (*it).size() << endl;
     }
     const auto mconst = m;
-    cout << " mconst = ";
-    for(auto x : m){
-        cout << x << " ";
+    cout << "mconst = ";
+    for(auto x : mconst){
+        cout << setw(6) << x << " ";
     }
     cout << endl;
     return 0;
