@@ -14,35 +14,31 @@ class Trie
 private:
     struct TrieNode
     {
-        map<string, TrieNode *> children;
+        map<string, TrieNode> children;
         bool isEndOfSentence;
         TrieNode() : isEndOfSentence(false) {}
     };
 
-    TrieNode *root;
+    TrieNode root;
 
-    void addHelper(TrieNode *node, const vector<string> &sentence, int index)
+    void addHelper(TrieNode &node, const vector<string> &sentence, int index)
     {
         if (index == sentence.size())
         {
-            node->isEndOfSentence = true;
+            node.isEndOfSentence = true;
             return;
         }
-        if (node->children.find(sentence[index]) == node->children.end())
-        {
-            node->children[sentence[index]] = new TrieNode();
-        }
-        addHelper(node->children[sentence[index]], sentence, index + 1);
+        addHelper(node.children[sentence[index]], sentence, index + 1);
     }
 
-    void printEndingsHelper(TrieNode *node, vector<string> currentSentence)
+    void printEndingsHelper(TrieNode &node, vector<string> currentSentence)
     {
-        if (node->isEndOfSentence)
+        if (node.isEndOfSentence)
         {
             printSentence(currentSentence);
             cout << endl;
         }
-        for (auto &child : node->children)
+        for (auto &child : node.children)
         {
             currentSentence.push_back(child.first);
             printEndingsHelper(child.second, currentSentence);
@@ -50,38 +46,22 @@ private:
         }
     }
 
-    TrieNode *findNode(TrieNode *node, const vector<string> &sentence, int index)
+    TrieNode* findNode(TrieNode &node, const vector<string> &sentence, int index)
     {
         if (index == sentence.size())
         {
-            return node;
+            return &node;
         }
-        if (node->children.find(sentence[index]) == node->children.end())
+        auto it = node.children.find(sentence[index]);
+        if (it == node.children.end())
         {
             return nullptr;
         }
-        return findNode(node->children[sentence[index]], sentence, index + 1);
-    }
-
-    void deleteTrie(TrieNode *node)
-    {
-        for (auto &child : node->children)
-        {
-            deleteTrie(child.second);
-        }
-        delete node;
+        return findNode(it->second, sentence, index + 1);
     }
 
 public:
-    Trie()
-    {
-        root = new TrieNode();
-    }
-
-    ~Trie()
-    {
-        deleteTrie(root);
-    }
+    Trie() {}
 
     static void printSentence(const vector<string> &sentence)
     {
@@ -105,7 +85,7 @@ public:
         TrieNode *node = findNode(root, beginningOfSentence, 0);
         if (node)
         {
-            printEndingsHelper(node, beginningOfSentence);
+            printEndingsHelper(*node, beginningOfSentence);
         }
         else
         {
@@ -139,7 +119,7 @@ public:
 int main()
 {
     Trie dictionary;
-    dictionary.load("../sample.txt");
+    dictionary.load("./sample.txt");
     // dictionary.load("hamletEN.txt");
 
     dictionary.printPossibleEndings({"Curiosity"});
