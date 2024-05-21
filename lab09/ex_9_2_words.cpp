@@ -1,59 +1,62 @@
+#include <algorithm>
+#include <chrono>
 #include <iostream>
 #include <map>
 #include <unordered_map>
 #include <vector>
-#include <string>
-#include <algorithm>
-#include <cctype>
-
 using namespace std;
 
 /**
- * Converts a given string to lowercase and removes non-alphanumeric characters.
- * @param[in,out] word The string to be transformed.
+ * Removes all non alphanumeric characters from given word and converts to lower case.
+ * @param[in,out] word on return word consist only of lower case characters.
  */
-void toLowerAlpha(string& word) {
-    string cleaned;
-    for (char ch : word) {
-        if (isalnum(ch)) {
-            cleaned += tolower(ch);
-        }
-    }
-    word = cleaned;
+void toLowerAlpha(std::string &s1) {
+    s1.erase(remove_if(s1.begin(), s1.end(), [](const char c) {
+      return !isalnum(c);
+    }), s1.end());
+
+    transform(s1.begin(), s1.end(), s1.begin(), ::tolower);
 }
 
-int main() {
-    string word;
+template <typename T>
+void printTopWords(const T &wordCount) {
+    std::multimap<int, std::string> countWord;
 
-    map<string, int> wordsCount;
-   
+    for (const auto & [key, value] : wordCount)
+        countWord.insert({value, key});
 
+    int count = 0;
+    auto iter = countWord.rbegin();
+    while (iter != countWord.rend() && count < 20) {
+        std::cout << iter->first << ": " << iter->second << std::endl;
+        ++iter;
+        ++count;
+    }
+}
+
+int main(){
+    const auto start = std::chrono::high_resolution_clock::now();
+
+    int count = 0;
+    std::string word;
+    //map<string, int> c;
+    unordered_map<string, int> c;
+    std::vector<int> v;
     while (cin >> word) {
-        toLowerAlpha(word);  
-        if (!word.empty()) {
-            wordsCount[word]++;
-        }
+       toLowerAlpha(word);
+
+       if (!word.empty())
+           if (c[word]++ == 0) ++count;
     }
 
-    
-    cout << "Number of distinct words: " << wordsCount.size() << endl;
+    cout << "Number of distinct words : " << count << endl;
+    cout << "\nThe top 20 most popular words: \n";
 
-    
-    multimap<int, string, greater<int>> sortedWords;
+    printTopWords(c);
 
-
-    for (const auto& pair : wordsCount) {
-        sortedWords.insert({pair.second, pair.first});
-    }
-
-    cout << "\nThe top 20 most popular words:\n";
-
-    
-    int counter = 0;
-    for (const auto& pair : sortedWords) {
-        cout << pair.second << " : " << pair.first << '\n';
-        if (++counter == 20) break;
-    }
+    const auto end = std::chrono::high_resolution_clock::now();
+    const std::chrono::duration<double> duration = end - start;
+    std::cout << "\nFunction execution time: " << duration.count() << " seconds" << std::endl;
 
     return 0;
 }
