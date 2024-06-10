@@ -1,0 +1,4 @@
+/home/sit3kk/Effective-and-modern-CPP-programming-tasks/lab14/StringProject/build/CMakeFiles/string_tests.dir
+/home/sit3kk/Effective-and-modern-CPP-programming-tasks/lab14/StringProject/build/CMakeFiles/test.dir
+/home/sit3kk/Effective-and-modern-CPP-programming-tasks/lab14/StringProject/build/CMakeFiles/edit_cache.dir
+/home/sit3kk/Effective-and-modern-CPP-programming-tasks/lab14/StringProject/build/CMakeFiles/rebuild_cache.dir
