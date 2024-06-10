@@ -23,6 +23,20 @@ TEST(StringTest, CopyConstructor)
     ASSERT_EQ(s1.get(0), s2.get(0));
 }
 
+// Test for self-assignment
+TEST(StringTest, SelfAssignment)
+{
+    String s1("initial");
+    s1 = s1;
+    ASSERT_EQ(s1.get(0), 'i');
+    ASSERT_EQ(s1.get(1), 'n');
+    ASSERT_EQ(s1.get(2), 'i');
+    ASSERT_EQ(s1.get(3), 't');
+    ASSERT_EQ(s1.get(4), 'i');
+    ASSERT_EQ(s1.get(5), 'a');
+    ASSERT_EQ(s1.get(6), 'l');
+}
+
 // Test for set method and COW
 TEST(StringTest, SetMethodAndCOW)
 {
@@ -34,7 +48,7 @@ TEST(StringTest, SetMethodAndCOW)
     ASSERT_EQ(s2.get(0), 'j');
 }
 
-// Test for addition
+// Test for addition operator
 TEST(StringTest, AdditionOperator)
 {
     String s1("hello");
@@ -67,18 +81,13 @@ TEST(StringTest, CopyOnWriteBasic)
     ASSERT_EQ(copy.get(0), 'T');
 }
 
-// Test self-assignment
-TEST(StringTest, SelfAssignment)
+// Test for output operator
+TEST(StringTest, OutputOperator)
 {
-    String s1("initial");
-    s1 = s1;
-    ASSERT_EQ(s1.get(0), 'i');
-    ASSERT_EQ(s1.get(1), 'n');
-    ASSERT_EQ(s1.get(2), 'i');
-    ASSERT_EQ(s1.get(3), 't');
-    ASSERT_EQ(s1.get(4), 'i');
-    ASSERT_EQ(s1.get(5), 'a');
-    ASSERT_EQ(s1.get(6), 'l');
+    String s("hello");
+    std::ostringstream os;
+    os << s;
+    ASSERT_EQ(os.str(), "hello");
 }
 
 GTEST_API_ int main(int argc, char **argv)
