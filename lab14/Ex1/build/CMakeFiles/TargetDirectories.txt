@@ -1,0 +1,5 @@
+/home/sit3kk/Effective-and-modern-CPP-programming-tasks/lab14/Ex1/build/CMakeFiles/compile_vector_module.dir
+/home/sit3kk/Effective-and-modern-CPP-programming-tasks/lab14/Ex1/build/CMakeFiles/vector_module.dir
+/home/sit3kk/Effective-and-modern-CPP-programming-tasks/lab14/Ex1/build/CMakeFiles/main.dir
+/home/sit3kk/Effective-and-modern-CPP-programming-tasks/lab14/Ex1/build/CMakeFiles/edit_cache.dir
+/home/sit3kk/Effective-and-modern-CPP-programming-tasks/lab14/Ex1/build/CMakeFiles/rebuild_cache.dir

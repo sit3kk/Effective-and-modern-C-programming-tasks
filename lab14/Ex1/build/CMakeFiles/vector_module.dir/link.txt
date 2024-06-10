@@ -1,0 +1,2 @@
+/usr/bin/ar qc libvector_module.a CMakeFiles/vector_module.dir/dummy.cpp.o VectorModule.cppm.o
+/usr/bin/ranlib libvector_module.a
